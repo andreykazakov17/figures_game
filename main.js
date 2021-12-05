@@ -37,12 +37,12 @@ class Rect {
 
 let rectArr = [];
 
-function updateArr() {
-	let rect = new Rect();
-	rectArr.push(rect);
-	//console.log(rectArr);
-	//return rectArr;
-}
+// function updateArr() {
+// 	let rect = new Rect();
+// 	rectArr.push(rect);
+// 	//console.log(rectArr);
+// 	//return rectArr;
+// }
 
 //-- генерация рандомного числа фукцией
 
@@ -59,11 +59,22 @@ let timerID;
 
 let startBtn = document.querySelector(".start");
 let stopBtn = document.querySelector(".stop");
+let canvasElem = document.getElementById("canvas");
+
+// function startHandler() {
+// 	timerID = setTimeout(function() {
+// 		updateArr();
+// 		startHandler();
+// 	}, rand);
+// }
 
 function startHandler() {
-	timerID = setTimeout(function() {
-		updateArr();
-		startHandler();
+	
+	timerID = setInterval(function() {
+		let rect = new Rect();
+		rectArr.push(rect);
+		
+		//startHandler();
 	}, rand);
 }
 
@@ -105,22 +116,56 @@ stopBtn.addEventListener("click", stopHandler);
 // 	raf = window.requestAnimationFrame(draw);
 // }
 
+canvasElem.addEventListener("click", (event) => {
+
+	let eventX = event.offsetX;
+	let eventY = event.offsetY;
+
+	for(let obj of rectArr) {
+		if((obj.x < eventX < obj.x + obj.width) && (obj.y < eventY < obj.y + obj.height)) {
+			for(let value of rectArr) {
+				rectArr.splice(rectArr.indexOf(value), 1);
+			}
+		}
+	}
+});
 
 function animate() {
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
 
+	ctx.clearRect(0,0, canvas.width, canvas.height);
 	// тут может находиться ваш код
+
+
+	let filterArr = rectArr.filter((obj) => {
+		if(obj.y > canvasElem.height) {
+			rectArr.splice(rectArr.indexOf(obj), 1);
+		}
+	});
+	console.log(filterArr);
+
+
+
+
 	if(rectArr.length !== 0) {
 		for(let figure of rectArr) {
-			ctx.clearRect(0,0, canvas.width, canvas.height);
 			figure.draw(ctx);
-			//console.log(figure);
+			//figure.y = figure.y + figure.speed;
+			// canvasElem.addEventListener("click", (event) => {
+
+			// 	let eventX = event.offsetX;
+			// 	let eventY = event.offsetY;
 			
+			// 	if((figure.x < eventX < figure.x + figure.width) && (figure.y < eventY < figure.y + figure.height)) {
+			// 		rectArr.splice(rectArr.indexOf(figure), 1);
+			// 	}
+			// });
 		}
 		console.log(rectArr);
 	}
 
+	
 	// for(let figure of rectArr) {
 	// 	figure.draw(ctx);
 	// 	//console.log(figure);
